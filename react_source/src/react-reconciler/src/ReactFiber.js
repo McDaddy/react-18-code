@@ -1,5 +1,5 @@
-import { HostRoot } from "./ReactWorkTags";
 import { NoFlags } from "./ReactFiberFlags";
+import { HostComponent, HostRoot, IndeterminateComponent, HostText } from "./ReactWorkTags";
 
 /**
  *
@@ -33,6 +33,7 @@ export function FiberNode(tag, pendingProps, key) {
   this.subtreeFlags = NoFlags;
   //替身，轮替 在后面讲DOM-DIFF的时候会用到
   this.alternate = null;
+  this.index = 0;
 }
 // We use a double buffering pooling technique because we know that we'll only ever need at most two versions of a tree.
 // We pool the "other" unused  node that we're free to reuse.
@@ -45,4 +46,55 @@ export function createFiber(tag, pendingProps, key) {
 }
 export function createHostRootFiber() {
   return createFiber(HostRoot, null, null);
+}
+
+/**
+ * 基于老的fiber和新的属性创建新的fiber
+ * @param {*} current 老fiber
+ * @param {*} pendingProps 新属性
+ */
+export function createWorkInProgress(current, pendingProps) {
+  let workInProgress = current.alternate;
+  if (workInProgress === null) {
+    workInProgress = createFiber(current.tag, pendingProps, current.key);
+    workInProgress.type = current.type;
+    workInProgress.stateNode = current.stateNode;
+    workInProgress.alternate = current;
+    current.alternate = workInProgress;
+  } else {
+    workInProgress.pendingProps = pendingProps;
+    workInProgress.type = current.type;
+    workInProgress.flags = NoFlags;
+    workInProgress.subtreeFlags = NoFlags;
+  }
+  workInProgress.child = current.child;
+  workInProgress.memoizedProps = current.memoizedProps;
+  workInProgress.memoizedState = current.memoizedState;
+  workInProgress.updateQueue = current.updateQueue;
+  workInProgress.sibling = current.sibling;
+  workInProgress.index = current.index;
+  return workInProgress;
+}
+
+/**
+ * 根据虚拟DOM创建Fiber节点
+ * @param {*} element
+ */
+export function createFiberFromElement(element) {
+  const { type, key, props: pendingProps } = element;
+  return createFiberFromTypeAndProps(type, key, pendingProps);
+}
+
+function createFiberFromTypeAndProps(type, key, pendingProps) {
+  let tag = IndeterminateComponent; //
+  //如果类型type是一字符串 span div ，说此此Fiber类型是一个原生组件
+  if (typeof type === "string") {
+    tag = HostComponent;
+  }
+  const fiber = createFiber(tag, pendingProps, key);
+  fiber.type = type;
+  return fiber;
+}
+export function createFiberFromText(content) {
+  return createFiber(HostText, content, null);
 }
