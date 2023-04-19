@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 let element = (
-  <h1>
+  <h1 onClick={() => console.log('click')}>
     hello<span style={{ color: "red" }}>world</span>
   </h1>
 );

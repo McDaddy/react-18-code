@@ -3,7 +3,7 @@ import {
   insertBefore,
 } from "react-dom-bindings/src/client/ReactDOMHostConfig";
 import { Placement, MutationMask } from "./ReactFiberFlags";
-import { HostComponent, HostRoot, HostText } from "./ReactWorkTags";
+import { FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTags";
 
 function recursivelyTraverseMutationEffects(root, parentFiber) {
   if (parentFiber.subtreeFlags & MutationMask) {
@@ -60,10 +60,10 @@ function insertOrAppendPlacementNode(node, before, parent) {
     const { child } = node;
     if (child !== null) {
       //把大儿子添加到父亲DOM节点里面去
-      insertOrAppendPlacementNode(child, parent);
+      insertOrAppendPlacementNode(child, before, parent)
       let { sibling } = child;
       while (sibling !== null) {
-        insertOrAppendPlacementNode(sibling, parent);
+        insertOrAppendPlacementNode(child, before, parent)
         sibling = sibling.sibling;
       }
     }
@@ -128,6 +128,7 @@ function commitPlacement(finishedWork) {
  */
 export function commitMutationEffectsOnFiber(finishedWork, root) {
   switch (finishedWork.tag) {
+    case FunctionComponent:
     case HostRoot:
     case HostComponent:
     case HostText: {
