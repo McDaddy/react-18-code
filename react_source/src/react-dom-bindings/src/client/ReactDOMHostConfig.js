@@ -1,4 +1,5 @@
 import { setInitialProperties } from "./ReactDOMComponent";
+import { precacheFiberNode, updateFiberProps } from './ReactDOMComponentTree';
 
 export function shouldSetTextContent(type, props) {
   return (
@@ -10,9 +11,12 @@ export function createTextInstance(content) {
   return document.createTextNode(content);
 }
 
-export function createInstance(type) {
+export function createInstance(type, props, internalInstanceHandle) {
   const domElement = document.createElement(type);
-  //updateFiberProps(domElement, props);
+  //预先缓存fiber节点到DOM元素上
+  precacheFiberNode(internalInstanceHandle, domElement);
+  //把属性直接保存在domElement的属性上
+  updateFiberProps(domElement, props);
   return domElement;
 }
 
