@@ -1,5 +1,5 @@
-import { setInitialProperties } from "./ReactDOMComponent";
-import { precacheFiberNode, updateFiberProps } from './ReactDOMComponentTree';
+import { setInitialProperties, diffProperties, updateProperties } from "./ReactDOMComponent";
+import { precacheFiberNode, updateFiberProps } from "./ReactDOMComponentTree";
 
 export function shouldSetTextContent(type, props) {
   return (
@@ -33,11 +33,26 @@ export function appendChild(parentInstance, child) {
 }
 
 /**
- * 
+ *
  * @param {*} parentInstance 父DOM节点
  * @param {*} child 子DOM节点
  * @param {*} beforeChild 插入到谁的前面，它也是一个DOM节点
  */
 export function insertBefore(parentInstance, child, beforeChild) {
   parentInstance.insertBefore(child, beforeChild);
+}
+
+export function prepareUpdate(domElement, type, oldProps, newProps) {
+  return diffProperties(domElement, type, oldProps, newProps);
+}
+
+export function commitUpdate(
+  domElement,
+  updatePayload,
+  type,
+  oldProps,
+  newProps
+) {
+  updateProperties(domElement, updatePayload, type, oldProps, newProps);
+  updateFiberProps(domElement, newProps);
 }
