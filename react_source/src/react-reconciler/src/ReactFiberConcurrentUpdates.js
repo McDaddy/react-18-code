@@ -46,6 +46,7 @@ export function enqueueConcurrentHookUpdate(fiber, queue, update) {
   enqueueUpdate(fiber, queue, update);
   return getRootForUpdatedFiber(fiber);
 }
+
 function getRootForUpdatedFiber(sourceFiber) {
   let node = sourceFiber;
   let parent = node.return;

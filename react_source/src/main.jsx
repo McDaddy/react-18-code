@@ -1,24 +1,50 @@
-import * as React from 'react';
+import * as React from "react";
 import { createRoot } from "react-dom/client";
 
 function counter(state, action) {
-  if (action.type === 'add') return state + action.payload;
+  if (action.type === "add") return state + action.payload;
   return state;
 }
 
 function FunctionComponent() {
   const [number, setNumber] = React.useReducer(counter, 0);
+  const [count, setCounter] = React.useState(0);
   return (
-    <button
-      onClick={() => {
-        setNumber({ type: "add", payload: 1 });
-        setNumber({ type: "add", payload: 2 });
-        setNumber({ type: "add", payload: 3 });
-      }}
-    >
+    <button onClick={() => {
+      setNumber({ type: "add", payload: 1 })
+      setNumber({ type: "add", payload: 2 })
+      setCounter(count + 1)
+    }}>
       {number}
+      {count}
     </button>
   );
+  // const [number, setNumber] = React.useState(100);
+  // const [count, setCounter] = React.useState(0);
+  // const [obj, setObj] = React.useState({a: 1});
+  // return (
+  //   <button
+  //     onClick={() => {
+  //       obj.a = obj.a + 1
+  //       setObj(obj);
+  //       setNumber(number + 1);
+  //       setCounter(count + 1);
+  //     }}
+  //   >
+  //     <div>{number}</div>
+  //     <div>{obj.a}</div>
+  //     {count}
+  //   </button>
+  // );
+  // return number === 0 ? (
+  //   <div onClick={() => setNumber(number + 1)} key="title1" id="title">
+  //     title
+  //   </div>
+  // ) : (
+  //   <div onClick={() => setNumber(number + 1)} key="title2" id="title2">
+  //     title2
+  //   </div>
+  // );
 }
 
 const root = createRoot(document.getElementById("root"));
