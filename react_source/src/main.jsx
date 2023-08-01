@@ -35,13 +35,27 @@ function FunctionComponent() {
   //   </button>
   // );
   return number === 0 ? (
-    <div onClick={() => setNumber(number + 1)} key="title1" id="title">
-      title
-    </div>
+    <ul key="container" onClick={() => setNumber(number + 1)}>
+      <li key="A">A</li>
+      <li key="B" id="b">
+        B
+      </li>
+      <li key="C">C</li>
+      <li key="D">D</li>
+      <li key="E">E</li>
+      <li key="F" id="F">F</li>
+    </ul>
   ) : (
-    <span onClick={() => setNumber(number + 1)} key="title1" id="title2">
-      title2
-    </span>
+    <ul key="container" onClick={() => setNumber(number + 1)}>
+      <li key="A">A2</li>
+      <li key="C">C2</li>
+      <li key="E">E2</li>
+      <li key="B" id="b">
+        B
+      </li>
+      <li key="G">G</li>
+      <li key="D">D2</li>
+    </ul>
   );
 }
 
