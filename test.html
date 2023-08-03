@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>test</title>
+    <script>
+      setTimeout(() => {
+        const div = document.getElementById("root");
+        for (let i = 0; i < 1000; i++) {
+          div.style.height = `${i + 20}px`;
+        }
+        setTimeout(() => {
+          const div = document.getElementById("root");
+          for (let i = 0; i < 100; i++) {
+            div.style.height = `${i + 120}px`;
+          }
+        }, 1000);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root" style="background: gray">123</div>
+  </body>
+</html>
