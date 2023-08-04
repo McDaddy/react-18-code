@@ -1,4 +1,8 @@
-import { scheduleCallback } from "scheduler";
+import {
+  scheduleCallback,
+  NormalPriority as NormalSchedulerPriority,
+  shouldYield,
+} from "scheduler";
 import { createWorkInProgress } from "./ReactFiber";
 import { beginWork } from "./ReactFiberBeginWork";
 import { completeWork } from "./ReactFiberCompleteWork";
@@ -42,7 +46,7 @@ function ensureRootIsScheduled(root) {
   if (workInProgressRoot) return;
   workInProgressRoot = root;
   //告诉 浏览器要执行performConcurrentWorkOnRoot
-  scheduleCallback(performConcurrentWorkOnRoot.bind(null, root));
+  scheduleCallback(NormalSchedulerPriority, performConcurrentWorkOnRoot.bind(null, root));
 }
 
 function flushPassiveEffect() {
@@ -60,7 +64,7 @@ function flushPassiveEffect() {
  * 根据fiber构建fiber树,要创建真实的DOM节点，还需要把真实的DOM节点插入容器
  * @param {*} root
  */
-function performConcurrentWorkOnRoot(root) {
+function performConcurrentWorkOnRoot(root, timeout) {
   //第一次渲染以同步的方式渲染根节点，初次渲染的时候，都是同步
   renderRootSync(root);
   //开始进入提交 阶段，就是执行副作用，修改真实DOM
@@ -68,6 +72,7 @@ function performConcurrentWorkOnRoot(root) {
   root.finishedWork = finishedWork;
   commitRoot(root);
   workInProgressRoot = null;
+  // return performConcurrentWorkOnRoot;
 }
 function commitRoot(root) {
   //先获取新的构建好的fiber树的根fiber tag=3
@@ -76,7 +81,7 @@ function commitRoot(root) {
     || (finishedWork.flags & Passive) !== NoFlags) {
     if (!rootDoesHavePassiveEffect) {
       rootDoesHavePassiveEffect = true;
-      scheduleCallback(flushPassiveEffect);
+      scheduleCallback(NormalSchedulerPriority, flushPassiveEffect);
     }
   }
   //判断子树有没有副作用
@@ -105,6 +110,12 @@ function renderRootSync(root) {
   //开始构建fiber树
   prepareFreshStack(root);
   workLoopSync();
+}
+function workLoopConcurrent() {
+  //如果有下一个要构建的fiber并且时间片没有过期
+  while (workInProgress !== null && !shouldYield()) {
+    performUnitOfWork(workInProgress);
+  }
 }
 function workLoopSync() {
   while (workInProgress !== null) {
