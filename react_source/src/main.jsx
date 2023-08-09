@@ -57,25 +57,26 @@ function FunctionComponent() {
   //     <li key="D">D2</li>
   //   </ul>
   // );
-  React.useEffect(() => {
-    console.log('useEffect1');
-    return () => {
-      console.log('destroy useEffect1');
-    }
-  });
-  React.useLayoutEffect(() => {
-    console.log('useLayoutEffect');
-    return () => {
-      console.log('destroy useLayoutEffect');
-    }
-  });
-  React.useEffect(() => {
-    console.log('useEffect3');
-    return () => {
-      console.log('destroy useEffect3');
-    }
-  });
-  return (<button onClick={() => setNumber(number + 1)} style={{ width: number === 1? '100px' : '50px' }}>{number}</button>)
+  // React.useEffect(() => {
+  //   console.log('useEffect1');
+  //   return () => {
+  //     console.log('destroy useEffect1');
+  //   }
+  // });
+  // React.useLayoutEffect(() => {
+  //   console.log('useLayoutEffect');
+  //   return () => {
+  //     console.log('destroy useLayoutEffect');
+  //   }
+  // });
+  // React.useEffect(() => {
+  //   console.log('useEffect3');
+  //   return () => {
+  //     console.log('destroy useEffect3');
+  //   }
+  // });
+  // return (<button onClick={() => setNumber(number + 1)} style={{ width: number === 1? '100px' : '50px' }}>{number}</button>)
+  return <h1 >hello</h1>
 }
 
 const root = createRoot(document.getElementById("root"));

@@ -7,7 +7,10 @@ import {
   FunctionComponent,
 } from "./ReactWorkTags";
 import { mountChildFibers, reconcileChildFibers } from "./ReactChildFiber";
-import { processUpdateQueue } from "./ReactFiberClassUpdateQueue";
+import {
+  processUpdateQueue,
+  cloneUpdateQueue,
+} from "./ReactFiberClassUpdateQueue";
 import { shouldSetTextContent } from "react-dom-bindings/src/client/ReactDOMHostConfig";
 import { renderWithHooks } from "react-reconciler/src/ReactFiberHooks";
 
@@ -32,9 +35,11 @@ function reconcileChildren(current, workInProgress, nextChildren) {
   }
 }
 
-function updateHostRoot(current, workInProgress) {
+function updateHostRoot(current, workInProgress, renderLanes) {
+  const nextProps = workInProgress.pendingProps;
+  cloneUpdateQueue(current, workInProgress);
   //需要知道它的子虚拟DOM，知道它的儿子的虚拟DOM信息
-  processUpdateQueue(workInProgress); //workInProgress.memoizedState={ element }
+  processUpdateQueue(workInProgress, nextProps, renderLanes); //workInProgress.memoizedState={ element }
   const nextState = workInProgress.memoizedState;
   const nextChildren = nextState.element;
   //协调子节点 DOM-DIFF算法
@@ -101,7 +106,7 @@ export function updateFunctionComponent(
  * @param {*} workInProgress 新的fiber
  * @returns
  */
-export function beginWork(current, workInProgress) {
+export function beginWork(current, workInProgress, renderLanes) {
   logger(" ".repeat(indent.number) + "beginWork", workInProgress);
   indent.number += 2;
   switch (workInProgress.tag) {
@@ -110,7 +115,8 @@ export function beginWork(current, workInProgress) {
       return mountIndeterminateComponent(
         current,
         workInProgress,
-        workInProgress.type
+        workInProgress.type,
+        renderLanes
       );
     case FunctionComponent: {
       const Component = workInProgress.type;
@@ -119,13 +125,14 @@ export function beginWork(current, workInProgress) {
         current,
         workInProgress,
         Component,
-        nextProps
+        nextProps,
+        renderLanes
       );
     }
     case HostRoot:
-      return updateHostRoot(current, workInProgress);
+      return updateHostRoot(current, workInProgress, renderLanes);
     case HostComponent:
-      return updateHostComponent(current, workInProgress);
+      return updateHostComponent(current, workInProgress, renderLanes);
     case HostText:
       return null;
     default:

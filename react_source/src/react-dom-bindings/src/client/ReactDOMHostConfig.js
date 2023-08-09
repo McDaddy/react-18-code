@@ -1,5 +1,7 @@
 import { setInitialProperties, diffProperties, updateProperties } from "./ReactDOMComponent";
 import { precacheFiberNode, updateFiberProps } from "./ReactDOMComponentTree";
+import { DefaultEventPriority } from 'react-reconciler/src/ReactEventPriorities';
+import { getEventPriority } from '../events/ReactDOMEventListener';
 
 export function shouldSetTextContent(type, props) {
   return (
@@ -59,4 +61,12 @@ export function commitUpdate(
 
 export function removeChild(parentInstance, child) {
   parentInstance.removeChild(child);
+}
+
+export function getCurrentEventPriority() {
+  const currentEvent = window.event;
+  if (currentEvent === undefined) {
+    return DefaultEventPriority;
+  }
+  return getEventPriority(currentEvent.type);
 }
