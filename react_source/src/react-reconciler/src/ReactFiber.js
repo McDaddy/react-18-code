@@ -1,5 +1,11 @@
 import { NoFlags } from "./ReactFiberFlags";
-import { HostComponent, HostRoot, IndeterminateComponent, HostText } from "./ReactWorkTags";
+import {
+  HostComponent,
+  HostRoot,
+  IndeterminateComponent,
+  HostText,
+} from "./ReactWorkTags";
+import { NoLanes } from "./ReactFiberLane";
 
 /**
  *
@@ -35,6 +41,9 @@ export function FiberNode(tag, pendingProps, key) {
   this.alternate = null;
   this.index = 0;
   this.deletions = null;
+  this.lanes = NoLanes;
+  this.childLanes = NoLanes;
+  this.ref = null;
 }
 // We use a double buffering pooling technique because we know that we'll only ever need at most two versions of a tree.
 // We pool the "other" unused  node that we're free to reuse.
@@ -82,6 +91,10 @@ export function createWorkInProgress(current, pendingProps) {
   workInProgress.updateQueue = current.updateQueue;
   workInProgress.sibling = current.sibling;
   workInProgress.index = current.index;
+  workInProgress.ref = current.ref;
+  workInProgress.flags = current.flags;
+  workInProgress.lanes = current.lanes;
+  workInProgress.childLanes = current.childLanes;
   return workInProgress;
 }
 

@@ -61,6 +61,7 @@ function createChildReconciler(shouldTrackSideEffects) {
           deleteRemainingChildren(returnFiber, child.sibling);
           //如果key一样，类型也一样，则认为此节点可以复用
           const existing = useFiber(child, element.props);
+          existing.ref = element.ref;
           existing.return = returnFiber;
           return existing;
         } else {
@@ -76,6 +77,7 @@ function createChildReconciler(shouldTrackSideEffects) {
     //因为我们现实的初次挂载，老节点currentFirstChild肯定是没有的，所以可以直接根据虚拟DOM创建新的Fiber节点
     // 如果上面的diff逻辑没有复用，这里就需要根据虚拟dom新建一个新的fiber
     const created = createFiberFromElement(element);
+    created.ref = element.ref;
     created.return = returnFiber;
     return created;
   }
@@ -105,6 +107,7 @@ function createChildReconciler(shouldTrackSideEffects) {
       switch (newChild.$$typeof) {
         case REACT_ELEMENT_TYPE: {
           const created = createFiberFromElement(newChild);
+          created.ref = newChild.ref;
           created.return = returnFiber;
           return created;
         }
@@ -146,11 +149,13 @@ function createChildReconciler(shouldTrackSideEffects) {
       //判断是否类型一样，则表示key和type都一样，可以复用老的fiber和真实DOM
       if (current.type === elementType) {
         const existing = useFiber(current, element.props);
+        existing.ref = element.ref;
         existing.return = returnFiber;
         return existing;
       }
     }
     const created = createFiberFromElement(element);
+    created.ref = element.ref;
     created.return = returnFiber;
     return created;
   }

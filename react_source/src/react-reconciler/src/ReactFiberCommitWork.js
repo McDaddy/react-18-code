@@ -4,7 +4,14 @@ import {
   commitUpdate,
   removeChild,
 } from "react-dom-bindings/src/client/ReactDOMHostConfig";
-import { Placement, MutationMask, Update, Passive, LayoutMask} from "./ReactFiberFlags";
+import {
+  Placement,
+  MutationMask,
+  Update,
+  Passive,
+  LayoutMask,
+  Ref,
+} from "./ReactFiberFlags";
 import {
   FunctionComponent,
   HostComponent,
@@ -219,13 +226,12 @@ export function commitMutationEffectsOnFiber(finishedWork, root) {
   const flags = finishedWork.flags;
   switch (finishedWork.tag) {
     case FunctionComponent: {
-        recursivelyTraverseMutationEffects(root, finishedWork);
-        commitReconciliationEffects(finishedWork);
-        if (flags & Update) {
-          
-          commitHookEffectListUnmount(HookHasEffect | HookLayout, finishedWork);
-        }
-        break;
+      recursivelyTraverseMutationEffects(root, finishedWork);
+      commitReconciliationEffects(finishedWork);
+      if (flags & Update) {
+        commitHookEffectListUnmount(HookHasEffect | HookLayout, finishedWork);
+      }
+      break;
     }
     case HostRoot:
     case HostText: {
@@ -240,6 +246,9 @@ export function commitMutationEffectsOnFiber(finishedWork, root) {
       recursivelyTraverseMutationEffects(root, finishedWork);
       //再处理自己身上的副作用
       commitReconciliationEffects(finishedWork);
+      if (flags & Ref) {
+        commitAttachRef(finishedWork);
+      }
       //处理DOM更新
       if (flags & Update) {
         //获取真实DOM
@@ -267,6 +276,18 @@ export function commitMutationEffectsOnFiber(finishedWork, root) {
     }
     default:
       break;
+  }
+}
+
+function commitAttachRef(finishedWork) {
+  const ref = finishedWork.ref;
+  if (ref !== null) {
+    const instance = finishedWork.stateNode;
+    if (typeof ref === "function") {
+      ref(instance);
+    } else {
+      ref.current = instance;
+    }
   }
 }
 
@@ -303,7 +324,6 @@ function recursivelyTraversePassiveUnmountEffects(parentFiber) {
   }
 }
 function commitHookPassiveUnmountEffects(finishedWork, hookFlags) {
-  
   commitHookEffectListUnmount(hookFlags, finishedWork);
 }
 function commitHookEffectListUnmount(flags, finishedWork) {
@@ -392,7 +412,8 @@ function commitLayoutEffectOnFiber(finishedRoot, current, finishedWork) {
     }
     case FunctionComponent: {
       recursivelyTraverseLayoutEffects(finishedRoot, finishedWork);
-      if (flags & LayoutMask) {// LayoutMask=Update=4
+      if (flags & LayoutMask) {
+        // LayoutMask=Update=4
         commitHookLayoutEffects(finishedWork, HookHasEffect | HookLayout);
       }
       break;

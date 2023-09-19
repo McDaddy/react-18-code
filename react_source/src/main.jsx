@@ -1,86 +1,60 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 
-function counter(state, action) {
-  if (action.type === "add") return state + action.payload;
-  return state;
-}
+// function counter(state, action) {
+//   if (action.type === "add") return state + action.payload;
+//   return state;
+// }
+
+let counter = 0;
+let timer;
+let bCounter = 0;
+let cCounter = 0;
 
 function FunctionComponent() {
-  // const [number, setNumber] = React.useReducer(counter, 0);
-  // const [count, setCounter] = React.useState(0);
+  const [data, setData] = React.useState(0);
+  // console.log('data: ', data);
+  const divRef = React.useRef();
+  React.useEffect(() => {
+    setData(data + 1);
+    divRef.current.click();
+  }, []);
+  // const [numbers, setNumbers] = React.useState(new Array(100).fill('A'));
+  // console.log('numbers: ', numbers);
+  // const divRef = React.useRef();
+  // const updateB = (numbers) => new Array(100).fill(numbers[0] + 'B')
+  // updateB.id = 'updateB' + (bCounter++);
+  // const updateC = (numbers) => new Array(100).fill(numbers[0] + 'C')
+  // updateC.id = 'updateC' + (cCounter++);
+  // React.useEffect(() => {
+  //   timer = setInterval(() => {
+  //     divRef.current.click();//1
+  //     if (counter++ === 0) {
+  //       setNumbers(updateB)//16
+  //     }
+  //     divRef.current.click();//1
+  //     if (counter++ > 100) {
+  //       clearInterval(timer);
+  //     }
+  //   });
+  // }, []);
   // return (
-  //   <button onClick={() => {
-  //     setNumber({ type: "add", payload: 1 })
-  //     setNumber({ type: "add", payload: 2 })
-  //     setCounter(count + 1)
+  //   <div ref={divRef} onClick={() => {
+  //     setNumbers(updateC)
   //   }}>
-  //     {number}
-  //     {count}
-  //   </button>
-  // );
-  const [number, setNumber] = React.useState(0);
-  // const [count, setCounter] = React.useState(0);
-  // return (
-  //   <button
-  //     onClick={() => {
-  //       obj.a = obj.a + 1
-  //       setObj(obj);
-  //       setNumber(number + 1);
-  //       setCounter(count + 1);
-  //     }}
-  //   >
-  //     <div>{number}</div>
-  //     {count}
-  //   </button>
-  // );
-  // return number === 0 ? (
-  //   <ul key="container" onClick={() => setNumber(number + 1)}>
-  //     <li key="A">A</li>
-  //     <li key="B" id="b">
-  //       B
-  //     </li>
-  //     <li key="C">C</li>
-  //     <li key="D">D</li>
-  //     <li key="E">E</li>
-  //     <li key="F" id="F">F</li>
-  //   </ul>
-  // ) : (
-  //   <ul key="container" onClick={() => setNumber(number + 1)}>
-  //     <li key="A">A2</li>
-  //     <li key="C">C2</li>
-  //     <li key="E">E2</li>
-  //     <li key="B" id="b">
-  //       B
-  //     </li>
-  //     <li key="G">G</li>
-  //     <li key="D">D2</li>
-  //   </ul>
-  // );
-  // React.useEffect(() => {
-  //   console.log('useEffect1');
-  //   return () => {
-  //     console.log('destroy useEffect1');
-  //   }
-  // });
-  // React.useLayoutEffect(() => {
-  //   console.log('useLayoutEffect');
-  //   return () => {
-  //     console.log('destroy useLayoutEffect');
-  //   }
-  // });
-  // React.useEffect(() => {
-  //   console.log('useEffect3');
-  //   return () => {
-  //     console.log('destroy useEffect3');
-  //   }
-  // });
-  // return (<button onClick={() => setNumber(number + 1)} style={{ width: number === 1? '100px' : '50px' }}>{number}</button>)
-  return <h1 >hello</h1>
+  //     {numbers.map((number, index) => <span key={index}>{number}</span>)}
+  //   </div>
+  // )
+  return (
+    <div ref={divRef} onClick={() => setData(data - 1)}>
+      {data}
+    </div>
+  );
 }
+let element = <FunctionComponent />;
 
 const root = createRoot(document.getElementById("root"));
-root.render(<FunctionComponent />);
+root.render(element);
 
 // let element = (
 //   <h1>

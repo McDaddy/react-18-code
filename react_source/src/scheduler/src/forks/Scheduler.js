@@ -50,6 +50,7 @@ function scheduleCallback(priorityLevel, callback) {
   const startTime = currentTime;
   //超时时间
   let timeout;
+  //根据优先级计算过期的时间
   switch (priorityLevel) {
     case ImmediatePriority:
       timeout = IMMEDIATE_PRIORITY_TIMEOUT; // -1
@@ -164,12 +165,18 @@ function performWorkUntilDeadline() {
     }
   }
 }
+function unstable_cancelCallback(task) {
+  task.callback = null;
+}
+
 export {
   scheduleCallback as unstable_scheduleCallback,
-  shouldYieldToHost as shouldYield,
+  shouldYieldToHost as unstable_shouldYield,
   ImmediatePriority as unstable_ImmediatePriority,
   UserBlockingPriority as unstable_UserBlockingPriority,
   NormalPriority as unstable_NormalPriority,
   LowPriority as unstable_LowPriority,
   IdlePriority as unstable_IdlePriority,
+  unstable_cancelCallback,
+  getCurrentTime as now,
 };
